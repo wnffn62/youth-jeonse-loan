@@ -1,0 +1,10 @@
+# 조사 노트·스냅샷 원문·실행 산출물. 공개 대상이 아니다.
+_work/
+data/_backup/
+tools/_extracted.json
+
+__pycache__/
+*.pyc
+*.tmp
+.DS_Store
+Thumbs.db

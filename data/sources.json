@@ -1,0 +1,299 @@
+{
+  "note": "조사에서 실제 응답이 확인된 경로만 등재한다. 인증키가 필요하거나 응답하지 않은 경로는 enabled=false 로 두고 사유를 적는다.",
+  "asof": "2026-09-28",
+  "sources": [
+    {
+      "id": "nhuf_youth_beotimmok",
+      "name": "주택도시기금 청년전용 버팀목전세자금",
+      "tier": "review",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020301.jsp",
+      "keywords": [
+        "연 ",
+        "%",
+        "이하",
+        "억원",
+        "만원",
+        "전용면적",
+        "순자산",
+        "부부합산",
+        "세대주"
+      ],
+      "enabled": true,
+      "note": "금리값이 HTML에 직접 기재돼 파싱이 가능한 상품이다"
+    },
+    {
+      "id": "nhuf_beotimmok",
+      "name": "주택도시기금 버팀목전세자금(일반)",
+      "tier": "review",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020101.jsp",
+      "keywords": [
+        "연 ",
+        "%",
+        "이하",
+        "억원",
+        "만원",
+        "전용면적",
+        "순자산",
+        "부부합산"
+      ],
+      "enabled": true,
+      "note": "금리표 셀이 비어 있고 값을 동적으로 채운다. 요건 변경 감지용으로 쓰고 금리는 rate 조회 경로를 본다"
+    },
+    {
+      "id": "nhuf_youth_monthly",
+      "name": "주택도시기금 청년전용 보증부월세대출",
+      "tier": "review",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020701.jsp",
+      "keywords": [
+        "연 ",
+        "%",
+        "이하",
+        "만원",
+        "월세",
+        "전용면적"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "nhuf_stability_monthly",
+      "name": "주택도시기금 주거안정월세대출",
+      "tier": "review",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020201.jsp",
+      "keywords": [
+        "연 ",
+        "%",
+        "이하",
+        "만원",
+        "취업준비생",
+        "사회초년생"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "nhuf_newlywed",
+      "name": "주택도시기금 신혼부부전용 전세자금",
+      "tier": "review",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020401.jsp",
+      "keywords": [
+        "연 ",
+        "%",
+        "이하",
+        "억원",
+        "혼인",
+        "순자산"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "nhuf_product_list",
+      "name": "주택도시기금 전세자금대출 상품 목록 (신설·폐지 감지)",
+      "tier": "review",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP05/FP0502/FP05020101.jsp",
+      "selector": "#lnb, .lnb, nav",
+      "enabled": true,
+      "note": "메뉴 목록이 바뀌면 상품 신설 또는 폐지 신호다. 중소기업취업청년 대출의 취급 중단을 이 방식으로 확인했다"
+    },
+    {
+      "id": "nhuf_notice",
+      "name": "주택도시기금 공지사항",
+      "tier": "signal",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP08/FP0804/FP080402.jsp?mode=L",
+      "enabled": true,
+      "note": "기금 공지사항 게시판. 중대 개정만 게재되므로 금융위 RSS와 병행한다"
+    },
+    {
+      "id": "nhuf_asset_screen",
+      "name": "주택도시기금 자산심사 및 금리안내",
+      "tier": "review",
+      "type": "html",
+      "url": "https://nhuf.molit.go.kr/FP/FP08/FP0813/FP081301.jsp",
+      "keywords": [
+        "순자산",
+        "가산금리",
+        "%p",
+        "억원"
+      ],
+      "enabled": true,
+      "note": "순자산 기준과 사후 자산심사 가산금리의 근거 페이지다"
+    },
+    {
+      "id": "fsc_press",
+      "name": "금융위원회 보도자료 RSS",
+      "tier": "signal",
+      "type": "html",
+      "url": "https://www.fsc.go.kr/rss/no010101.xml",
+      "keywords": [
+        "전세",
+        "청년",
+        "보증",
+        "DSR",
+        "가계부채",
+        "버팀목",
+        "주거"
+      ],
+      "enabled": true,
+      "note": "조사 시점 HTTP 200·item 8건 정상 반환을 확인했다"
+    },
+    {
+      "id": "hf_jeonse_guarantee",
+      "name": "한국주택금융공사 전세자금보증",
+      "tier": "review",
+      "type": "html",
+      "url": "https://www.hf.go.kr/ko/sub02/sub02_01_01.do",
+      "keywords": [
+        "보증료율",
+        "%",
+        "보증한도",
+        "억원",
+        "보증비율"
+      ],
+      "enabled": true,
+      "note": "보증료율과 보증한도가 기금 대출의 실제 승인액을 제약한다"
+    },
+    {
+      "id": "hf_notice",
+      "name": "한국주택금융공사 공지사항",
+      "tier": "signal",
+      "type": "html",
+      "url": "https://www.hf.go.kr/ko/sub07/sub01_01.do",
+      "keywords": [
+        "전세",
+        "보증",
+        "청년",
+        "제도",
+        "변경"
+      ],
+      "enabled": false,
+      "note": "sub07 계열이 HTTP 502를 반환한다. 경로 재확인 후 활성화한다"
+    },
+    {
+      "id": "kfb_compare",
+      "name": "전국은행연합회 소비자포털 전세자금대출 비교공시",
+      "tier": "review",
+      "type": "html",
+      "url": "https://portal.kfb.or.kr/compare/loan_household_new.php",
+      "keywords": [
+        "전세자금대출",
+        "기준금리",
+        "가산금리",
+        "신용평점",
+        "%"
+      ],
+      "enabled": true,
+      "note": "신용점수와 금융권별 금리를 함께 제공하는 유일한 공식 경로다. 인코딩이 euc-kr·utf-8 혼재라 오류 허용 디코딩이 필요하다"
+    },
+    {
+      "id": "finlife_compare",
+      "name": "금융감독원 금융상품통합비교공시 전세자금대출",
+      "tier": "review",
+      "type": "html",
+      "url": "https://finlife.fss.or.kr/finlife/ldng/rentHus/list.do?menuId=2000300",
+      "keywords": [
+        "전세",
+        "%",
+        "평균",
+        "금리"
+      ],
+      "enabled": true,
+      "note": "은행과 저축은행 금리를 함께 수록한다. 공시 지연 유의문구가 페이지에 있다"
+    },
+    {
+      "id": "seoul_youth",
+      "name": "서울시 청년몽땅정보통 금융지원",
+      "tier": "signal",
+      "type": "html",
+      "url": "https://soco.seoul.go.kr/youth/main/contents.do?menuNo=400024",
+      "keywords": [
+        "임차보증금",
+        "이자",
+        "지원",
+        "보증금",
+        "%",
+        "만원"
+      ],
+      "enabled": true,
+      "note": "청년몽땅정보통 루트는 본문이 스크립트로 렌더링돼 수집되지 않아 사업안내 페이지로 교체했다"
+    },
+    {
+      "id": "daegu_youth",
+      "name": "대구시 청년 주택 임차보증금 대출이자 지원",
+      "tier": "signal",
+      "type": "html",
+      "url": "https://anbang.daegu.go.kr/jeonseMonthly/businessOverView.do",
+      "keywords": [
+        "임차보증금",
+        "이자",
+        "지원",
+        "청년",
+        "%"
+      ],
+      "enabled": true
+    },
+    {
+      "id": "molit_press",
+      "name": "국토교통부 보도자료",
+      "tier": "signal",
+      "type": "html",
+      "url": "https://www.molit.go.kr/USR/NEWS/m_71/lst.jsp",
+      "keywords": [
+        "전세",
+        "청년",
+        "버팀목",
+        "주거",
+        "임차"
+      ],
+      "enabled": false,
+      "note": "RSS가 없고 세션 쿠키 기반이다. https 스킴에 브라우저 UA와 쿠키 저장을 함께 지정해야 응답한다. 현 수집기는 쿠키를 유지하지 않아 비활성으로 둔다"
+    },
+    {
+      "id": "youthcenter_api",
+      "name": "온통청년 청년정책 목록 조회 API",
+      "tier": "auto",
+      "type": "api",
+      "url": "https://www.youthcenter.go.kr/go/ythip/getPlcy",
+      "auth_params": {
+        "apiKeyNm": "YOUTHCENTER_API_KEY"
+      },
+      "params": {
+        "pageNum": "1",
+        "pageSize": "50",
+        "plcyKywdNm": "전세"
+      },
+      "enabled": false,
+      "note": "인증키 발급 후 활성화한다. 인증키 없이 호출하면 HTTP 400을 반환한다. 응답 스키마와 금리·소득요건의 정형 제공 여부는 미확인"
+    },
+    {
+      "id": "bokjiro_local_api",
+      "name": "복지로 지자체복지서비스 목록조회 API",
+      "tier": "auto",
+      "type": "api",
+      "url": "https://apis.data.go.kr/B554287/LocalGovernmentWelfareInformations/LcgvWelfarelist",
+      "auth_params": {
+        "serviceKey": "DATA_GO_KR_API_KEY"
+      },
+      "params": {
+        "pageNo": "1",
+        "numOfRows": "50",
+        "searchKeyword": "전세"
+      },
+      "enabled": false,
+      "note": "인증키 발급 후 활성화한다. 인증키 없이 호출하면 HTTP 401을 반환한다"
+    },
+    {
+      "id": "hf_open_api",
+      "name": "한국주택금융공사 Open API",
+      "tier": "auto",
+      "type": "api",
+      "url": "https://www.hf.go.kr/ko/openApi/main.do",
+      "enabled": false,
+      "note": "조사 시점 HTTP 502를 반환했다. 이 경로를 전제로 설계하지 않는다"
+    }
+  ]
+}

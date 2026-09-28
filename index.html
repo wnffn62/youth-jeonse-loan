@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>청년 전세대출 진단</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#15181d; --sub:#5b6472; --line:#dfe3e9;
+  --accent:#1f4e79; --accent-soft:#e8f0f8; --ok:#1d6b45; --ok-soft:#e5f3ec;
+  --warn:#8a5a00; --warn-soft:#fdf2dd; --bad:#b03a2e; --bad-soft:#fbeae8;
+  --radius:14px; --shadow:0 1px 2px rgba(16,24,40,.06),0 8px 24px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#101317; --card:#181c22; --ink:#e9edf3; --sub:#9aa5b4; --line:#2a313a;
+    --accent:#6fa8dc; --accent-soft:#1b2b3b; --ok:#6ed19b; --ok-soft:#14291f;
+    --warn:#e8b862; --warn-soft:#2c2313; --bad:#f08a7c; --bad-soft:#2e1a17;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101317; --card:#181c22; --ink:#e9edf3; --sub:#9aa5b4; --line:#2a313a;
+  --accent:#6fa8dc; --accent-soft:#1b2b3b; --ok:#6ed19b; --ok-soft:#14291f;
+  --warn:#e8b862; --warn-soft:#2c2313; --bad:#f08a7c; --bad-soft:#2e1a17;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic','맑은 고딕',system-ui,sans-serif;
+  line-height:1.62; font-size:16px; -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:780px;margin:0 auto;padding:0 16px 72px}
+header{padding:28px 0 16px}
+h1{font-size:23px;line-height:1.3;margin:0 0 6px;letter-spacing:-.02em}
+.lede{color:var(--sub);font-size:14.5px;margin:0}
+.asof{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;font-size:12.5px;color:var(--sub)}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--card);
+  border-radius:999px;padding:4px 11px;font-size:12.5px}
+.pill.stale{border-color:var(--warn);background:var(--warn-soft);color:var(--warn);font-weight:600}
+.pill.pend{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:600}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:20px;margin:16px 0}
+h2{font-size:16.5px;margin:0 0 4px;letter-spacing:-.01em}
+.hint{color:var(--sub);font-size:13.5px;margin:0 0 16px}
+
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+.full{grid-column:1/-1}
+label{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px}
+label .q{font-weight:400;color:var(--sub);font-size:12.5px}
+input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;
+  background:var(--bg);color:var(--ink);font-size:15px;font-family:inherit}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+.money{position:relative}
+.money input{padding-right:42px}
+.money .unit{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:13.5px;pointer-events:none}
+.readout{font-size:12.5px;color:var(--accent);margin-top:5px;min-height:17px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--sub);border-radius:999px;
+  padding:5px 11px;font-size:12.5px;cursor:pointer;font-family:inherit}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.check{display:flex;gap:9px;align-items:flex-start;font-weight:400;font-size:14px;margin-bottom:9px}
+.check input{width:18px;height:18px;flex:none;margin-top:2px}
+
+.btn{width:100%;padding:14px;border:0;border-radius:12px;background:var(--accent);color:#fff;
+  font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:18px;letter-spacing:-.01em}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);margin-top:10px;font-size:14px;padding:11px}
+
+/* 결과 */
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:18px}
+@media (max-width:480px){.sum{grid-template-columns:1fr 1fr}}
+.sum div{background:var(--card);padding:14px 12px;text-align:center}
+.sum b{display:block;font-size:21px;line-height:1.25;letter-spacing:-.02em}
+.sum span{font-size:12px;color:var(--sub)}
+
+.prod{border:1px solid var(--line);border-radius:12px;padding:17px;margin-bottom:13px;background:var(--card)}
+.prod.top{border-color:var(--accent);border-width:2px;padding:16px}
+.prod-h{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:11px}
+.prod-h h3{font-size:16px;margin:0 0 4px;letter-spacing:-.01em}
+.op{font-size:12.5px;color:var(--sub)}
+.tag{flex:none;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.t-ok{background:var(--ok-soft);color:var(--ok)}
+.t-warn{background:var(--warn-soft);color:var(--warn)}
+.t-bad{background:var(--bad-soft);color:var(--bad)}
+.t-best{background:var(--accent);color:#fff}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:13px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media (max-width:480px){.kv{grid-template-columns:1fr 1fr}}
+.kv div span{display:block;font-size:11.5px;color:var(--sub);margin-bottom:2px}
+.kv div b{font-size:16px;letter-spacing:-.02em}
+.kv div b small{font-size:11.5px;font-weight:400;color:var(--sub)}
+.rows{margin-top:12px;font-size:13.5px}
+.rows dl{display:grid;grid-template-columns:78px 1fr;gap:5px 12px;margin:0}
+.rows dt{color:var(--sub);font-size:13px}
+.rows dd{margin:0}
+.why{margin-top:12px;padding:11px 13px;border-radius:10px;font-size:13.5px}
+.why.bad{background:var(--bad-soft);color:var(--bad)}
+.why.warn{background:var(--warn-soft);color:var(--warn)}
+.why ul{margin:5px 0 0;padding-left:17px}
+.why li{margin:2px 0}
+.src{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub)}
+.src a{color:var(--accent)}
+details{margin-top:11px}
+summary{cursor:pointer;font-size:13.5px;color:var(--accent);font-weight:600}
+details .in{padding:10px 0 0;font-size:13.5px;color:var(--sub)}
+details .in ul{margin:4px 0;padding-left:18px}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+th{background:var(--bg);font-size:12.5px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll table{min-width:520px}
+
+.note{background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;
+  padding:14px 16px;font-size:13.5px;margin:16px 0}
+.note b{display:block;margin-bottom:5px}
+footer{color:var(--sub);font-size:12.5px;text-align:center;padding:26px 8px;line-height:1.7}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>청년 전세대출 진단</h1>
+  <p class="lede">소득·재직상태·신용점수·보증금을 넣으면 지금 신청 가능한 상품과 예상 금리를 계산합니다.
+    정책자금이 은행 대출보다 유리한지도 같이 비교합니다.</p>
+  <div class="asof" id="asofBar"></div>
+</header>
+
+<div class="card" id="formCard">
+  <h2>내 조건 입력</h2>
+  <p class="hint">모르는 항목은 「모름」으로 두어도 됩니다. 그 항목은 판정에서 「확인 필요」로 표시합니다.</p>
+
+  <div class="grid">
+    <div>
+      <label for="age">만 나이</label>
+      <input type="number" id="age" min="18" max="70" value="27" inputmode="numeric">
+    </div>
+    <div>
+      <label for="marital">혼인 상태</label>
+      <select id="marital">
+        <option value="single">미혼</option>
+        <option value="preparing">결혼 예정</option>
+        <option value="married">기혼</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="income">본인 연소득 <span class="q">세전</span></label>
+      <div class="money"><input type="number" id="income" min="0" step="100" value="3500" inputmode="numeric"><span class="unit">만원</span></div>
+      <div class="readout" id="incomeOut"></div>
+      <div class="chips">
+        <button type="button" class="chip" data-set="income" data-v="0">소득 없음</button>
+        <button type="button" class="chip" data-set="income" data-v="2400">2,400</button>
+        <button type="button" class="chip" data-set="income" data-v="3500">3,500</button>
+        <button type="button" class="chip" data-set="income" data-v="5000">5,000</button>
+      </div>
+    </div>
+    <div>
+      <label for="spouseIncome">배우자 연소득</label>
+      <div class="money"><input type="number" id="spouseIncome" min="0" step="100" value="0" inputmode="numeric"><span class="unit">만원</span></div>
+      <div class="readout" id="spouseOut"></div>
+    </div>
+
+    <div>
+      <label for="employment">재직 상태</label>
+      <select id="employment">
+        <option value="sme">중소·중견기업 재직</option>
+        <option value="large">대기업·공공기관 재직</option>
+        <option value="public">공무원·교직원</option>
+        <option value="newbie">재직 3개월 미만 (사회초년생)</option>
+        <option value="freelance">프리랜서·개인사업자</option>
+        <option value="contract">계약직·파견직</option>
+        <option value="none">무직·구직 중</option>
+        <option value="student">대학생·대학원생</option>
+      </select>
+    </div>
+    <div>
+      <label for="tenure">현 직장 근속</label>
+      <select id="tenure">
+        <option value="0">해당 없음</option>
+        <option value="1">1개월 미만</option>
+        <option value="3">1~3개월</option>
+        <option value="6" selected>3~6개월</option>
+        <option value="12">6개월~1년</option>
+        <option value="24">1년 이상</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="credit">신용점수 <span class="q">NICE 기준</span></label>
+      <select id="credit">
+        <option value="">모름</option>
+        <option value="950">900점 이상 (1등급)</option>
+        <option value="870" selected>850~899점 (2~3등급)</option>
+        <option value="800">800~849점 (4등급)</option>
+        <option value="730">700~799점 (5~6등급)</option>
+        <option value="650">600~699점 (7등급)</option>
+        <option value="550">600점 미만 (8등급 이하)</option>
+      </select>
+    </div>
+    <div>
+      <label for="assets">순자산 <span class="q">보유 자산 − 부채</span></label>
+      <div class="money"><input type="number" id="assets" min="0" step="100" value="5000" inputmode="numeric"><span class="unit">만원</span></div>
+      <div class="readout" id="assetsOut"></div>
+    </div>
+
+    <div>
+      <label for="region">임차 예정 지역</label>
+      <select id="region">
+        <option value="seoul">서울</option>
+        <option value="metro">경기·인천</option>
+        <option value="metro_city">광역시</option>
+        <option value="other">그 외 지역</option>
+      </select>
+    </div>
+    <div>
+      <label for="area">전용면적</label>
+      <select id="area">
+        <option value="60">60㎡ 이하</option>
+        <option value="85" selected>60~85㎡</option>
+        <option value="100">85㎡ 초과</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="deposit">임차보증금</label>
+      <div class="money"><input type="number" id="deposit" min="0" step="100" value="12000" inputmode="numeric"><span class="unit">만원</span></div>
+      <div class="readout" id="depositOut"></div>
+      <div class="chips">
+        <button type="button" class="chip" data-set="deposit" data-v="5000">5,000</button>
+        <button type="button" class="chip" data-set="deposit" data-v="10000">1억</button>
+        <button type="button" class="chip" data-set="deposit" data-v="20000">2억</button>
+        <button type="button" class="chip" data-set="deposit" data-v="30000">3억</button>
+      </div>
+    </div>
+    <div>
+      <label for="ownFund">내 보유 자금 <span class="q">대출 말고 직접 낼 돈</span></label>
+      <div class="money"><input type="number" id="ownFund" min="0" step="100" value="2000" inputmode="numeric"><span class="unit">만원</span></div>
+      <div class="readout" id="ownOut"></div>
+    </div>
+
+    <div>
+      <label for="monthly">월세 <span class="q">전세면 0</span></label>
+      <div class="money"><input type="number" id="monthly" min="0" step="1" value="0" inputmode="numeric"><span class="unit">만원</span></div>
+    </div>
+    <div>
+      <label for="household">세대 구성</label>
+      <select id="household">
+        <option value="head" selected>세대주</option>
+        <option value="prep">예비 세대주 (대출 후 전입 예정)</option>
+        <option value="member">세대원 (부모님 세대에 속함)</option>
+      </select>
+    </div>
+
+    <div class="full">
+      <label>해당 사항 체크</label>
+      <label class="check"><input type="checkbox" id="noHome" checked><span>무주택자다 (세대원 전원 주택 없음)</span></label>
+      <label class="check"><input type="checkbox" id="firstTime" checked><span>생애 최초로 전세자금대출을 받는다</span></label>
+      <label class="check"><input type="checkbox" id="subscription"><span>주택청약종합저축에 가입해 납입 중이다</span></label>
+      <label class="check"><input type="checkbox" id="delinquent"><span>최근 연체·신용회복·채무조정 이력이 있다</span></label>
+    </div>
+  </div>
+
+  <button class="btn" id="run">진단하기</button>
+</div>
+
+<div id="result" class="hide"></div>
+
+<footer>
+  본 결과는 공개된 제도 자료를 근거로 한 참고용 추정치입니다. 실제 승인 여부·한도·금리는
+  은행 심사와 보증기관 심사에서 최종 결정됩니다.<br>
+  <span id="footAsof"></span>
+</footer>
+
+</div>
+
+<script src="data/policies.js"></script>
+<script>
+(function(){
+"use strict";
+
+var D = window.POLICY_DATA || null;
+var $ = function(id){ return document.getElementById(id); };
+var man = function(n){ // 만원 → 읽기 쉬운 한글 금액
+  n = Number(n)||0;
+  if(!n) return "0원";
+  if(n>=10000){
+    var eok = Math.floor(n/10000), rest = n%10000;
+    return eok + "억" + (rest ? " " + rest.toLocaleString() + "만원" : "원");
+  }
+  return n.toLocaleString() + "만원";
+};
+var won = function(n){ return (Math.round(Number(n)||0)).toLocaleString() + "원"; };
+
+/* ---------- 상단 기준일 배너 ---------- */
+function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+function renderAsof(){
+  var bar = $("asofBar");
+  if(!D){
+    bar.innerHTML = '<span class="pill stale">데이터 파일을 찾지 못했습니다. data/policies.js 를 확인하세요.</span>';
+    return;
+  }
+  var html = '<span class="pill">제도 기준일 <b style="margin-left:4px">'+(D.asof||"미상")+'</b></span>';
+  if(D.last_checked) html += '<span class="pill">최근 변경 점검 '+D.last_checked+'</span>';
+  var stale = null;
+  if(D.asof){
+    var gap = daysBetween(new Date(D.asof), new Date());
+    if(gap > (D.stale_days||90)) stale = gap;
+  }
+  if(stale) html += '<span class="pill stale">기준일이 '+stale+'일 지났습니다. 신청 전 원문 확인 필요</span>';
+  var pend = (D.pending_review||[]).filter(function(p){ return p.status==="확정대기"; });
+  if(pend.length) html += '<span class="pill pend">변경 감지 '+pend.length+'건 확정 대기</span>';
+  bar.innerHTML = html;
+  $("footAsof").textContent = "제도 기준일 " + (D.asof||"미상") +
+    (D.last_checked ? " · 최근 변경 점검 " + D.last_checked : "");
+}
+
+/* ---------- 입력 수집 ---------- */
+function readInput(){
+  var i = {
+    age:        +$("age").value || 0,
+    marital:    $("marital").value,
+    income:     +$("income").value || 0,
+    spouse:     +$("spouseIncome").value || 0,
+    employment: $("employment").value,
+    tenure:     +$("tenure").value || 0,
+    credit:     $("credit").value === "" ? null : +$("credit").value,
+    assets:     +$("assets").value || 0,
+    region:     $("region").value,
+    area:       +$("area").value,
+    deposit:    +$("deposit").value || 0,
+    ownFund:    +$("ownFund").value || 0,
+    monthly:    +$("monthly").value || 0,
+    household:  $("household").value,
+    noHome:     $("noHome").checked,
+    firstTime:  $("firstTime").checked,
+    subscription: $("subscription").checked,
+    delinquent: $("delinquent").checked
+  };
+  i.householdIncome = i.marital === "married" ? i.income + i.spouse : i.income;
+  i.need = Math.max(0, i.deposit - i.ownFund);
+  i.hasIncomeProof = ["sme","large","public","contract"].indexOf(i.employment) >= 0 && i.tenure >= 3;
+  return i;
+}
+
+/* ---------- 규칙 엔진 ---------- */
+/* 규칙 하나는 { field, op, value, label, hard } 형태다.
+   hard=true 면 미충족 시 탈락, false 면 경고로만 표시한다. */
+var OPS = {
+  gte:    function(v,t){ return v >= t; },
+  lte:    function(v,t){ return v <= t; },
+  lt:     function(v,t){ return v <  t; },
+  gt:     function(v,t){ return v >  t; },
+  eq:     function(v,t){ return v === t; },
+  between:function(v,t){ return v >= t[0] && v <= t[1]; },
+  "in":   function(v,t){ return t.indexOf(v) >= 0; },
+  notIn:  function(v,t){ return t.indexOf(v) < 0; },
+  truthy: function(v){ return !!v; },
+  falsy:  function(v){ return !v; }
+};
+
+function evalRules(product, inp){
+  var failed = [], unknown = [], warn = [];
+  (product.rules||[]).forEach(function(r){
+    var v = inp[r.field];
+    if(v === null || v === undefined || (r.field === "credit" && v === null)){
+      unknown.push(r.label); return;
+    }
+    var fn = OPS[r.op];
+    if(!fn){ unknown.push(r.label); return; }
+    if(!fn(v, r.value)){
+      (r.hard === false ? warn : failed).push(r.label + (r.fail ? " — " + r.fail : ""));
+    }
+  });
+  var verdict = failed.length ? "ineligible" : (unknown.length ? "check" : "eligible");
+  return { verdict: verdict, failed: failed, unknown: unknown, warn: warn };
+}
+
+/* 금리표에서 해당 구간을 고른다. 조건이 더 많이 명시된 행을 우선한다. */
+function pickRate(product, inp){
+  var rows = product.rate_table || [];
+  var best = null, bestSpec = -1;
+  for(var k=0;k<rows.length;k++){
+    var r = rows[k], spec = 0, ok = true;
+    if(r.income_max  != null){ spec++; if(inp.householdIncome > r.income_max) ok = false; }
+    if(r.income_min  != null){ spec++; if(inp.householdIncome < r.income_min) ok = false; }
+    if(r.deposit_max != null){ spec++; if(inp.deposit > r.deposit_max) ok = false; }
+    if(r.deposit_min != null){ spec++; if(inp.deposit < r.deposit_min) ok = false; }
+    if(r.credit_min  != null){ spec++; if(inp.credit == null || inp.credit < r.credit_min) ok = false; }
+    if(r.region      != null){ spec++; if(r.region !== inp.region) ok = false; }
+    /* regions 는 지역 묶음이다. 「지방 0.2%p 인하」처럼 여러 지역에 같은 금리가 걸릴 때 쓴다. */
+    if(r.regions     != null){ spec++; if(r.regions.indexOf(inp.region) < 0) ok = false; }
+    if(ok && spec > bestSpec){ best = r; bestSpec = spec; }
+  }
+  if(!best) return null;
+  var lo = best.rate, hi = best.rate_max != null ? best.rate_max : best.rate;
+  return { rate: lo, rateMax: hi, basis: best.label || "", fixed: !!best.fixed };
+}
+
+/* 우대금리 — 사용자가 충족한 항목만 추려 보여 준다. 기본 금리에서 자동으로 빼지 않는다. */
+function pickDiscounts(product, inp){
+  return (product.discounts||[]).filter(function(d){
+    if(!d.when) return true;
+    var v = inp[d.when.field];
+    var fn = OPS[d.when.op];
+    return fn ? fn(v, d.when.value) : false;
+  });
+}
+
+function calcLimit(product, inp){
+  var caps = [];
+  var lim = product.limit || {};
+  var base = lim.max;
+  if(lim.max_by_region && lim.max_by_region[inp.region] != null) base = lim.max_by_region[inp.region];
+  if(base != null) caps.push({ v: base, why: "상품 한도" });
+  if(lim.deposit_ratio != null)
+    caps.push({ v: Math.floor(inp.deposit * lim.deposit_ratio), why: "보증금의 " + Math.round(lim.deposit_ratio*100) + "%" });
+  caps.push({ v: inp.need, why: "실제 필요액" });
+  var binding = caps.reduce(function(a,b){ return b.v < a.v ? b : a; }, caps[0]);
+  return { amount: Math.max(0, binding.v), binding: binding.why, caps: caps };
+}
+
+/* ---------- 렌더 ---------- */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+
+function prodCard(p, inp, isTop){
+  var ev = evalRules(p, inp);
+  var rate = pickRate(p, inp);
+  var lim  = calcLimit(p, inp);
+  var disc = pickDiscounts(p, inp);
+  var tag, cls;
+  if(ev.verdict === "ineligible"){ tag = "요건 미충족"; cls = "t-bad"; }
+  else if(ev.verdict === "check"){ tag = "확인 필요";  cls = "t-warn"; }
+  else if(isTop){ tag = "가장 유리"; cls = "t-best"; }
+  else { tag = "신청 가능"; cls = "t-ok"; }
+
+  var rateTxt = "—", monthly = "—";
+  if(rate && ev.verdict !== "ineligible"){
+    rateTxt = rate.rate === rate.rateMax
+      ? "연 " + rate.rate.toFixed(2) + "%"
+      : "연 " + rate.rate.toFixed(2) + "~" + rate.rateMax.toFixed(2) + "%";
+    monthly = won(lim.amount * 10000 * (rate.rate/100) / 12);
+    if(rate.rate !== rate.rateMax)
+      monthly += "~" + won(lim.amount * 10000 * (rate.rateMax/100) / 12);
+  }
+
+  var h = '<div class="prod'+(isTop&&ev.verdict==="eligible"?" top":"")+'">';
+  h += '<div class="prod-h"><div><h3>'+esc(p.name)+'</h3>'+
+       '<div class="op">'+esc(p.operator)+(p.category?" · "+esc(p.category):"")+
+       (p.status && p.status!=="운영중" ? ' · <b style="color:var(--bad)">'+esc(p.status)+'</b>' : '')+
+       '</div></div><span class="tag '+cls+'">'+tag+'</span></div>';
+
+  h += '<div class="kv">'+
+       '<div><span>예상 금리</span><b>'+rateTxt+(rate&&rate.fixed?' <small>고정</small>':'')+'</b></div>'+
+       '<div><span>예상 한도</span><b>'+(ev.verdict==="ineligible"?"—":man(lim.amount))+'</b></div>'+
+       '<div><span>월 이자</span><b>'+monthly+'</b></div></div>';
+
+  var dl = '<dl>';
+  if(rate && rate.basis) dl += '<dt>금리 근거</dt><dd>'+esc(rate.basis)+'</dd>';
+  if(ev.verdict!=="ineligible") dl += '<dt>한도 제약</dt><dd>'+esc(lim.binding)+'에 걸립니다</dd>';
+  if(p.guarantee) dl += '<dt>보증</dt><dd>'+esc(p.guarantee)+'</dd>';
+  if(p.term)      dl += '<dt>기간</dt><dd>'+esc(p.term)+'</dd>';
+  if(p.channel)   dl += '<dt>신청</dt><dd>'+esc(p.channel)+'</dd>';
+  dl += '</dl>';
+  h += '<div class="rows">'+dl+'</div>';
+
+  if(ev.failed.length)
+    h += '<div class="why bad"><b>신청할 수 없는 이유</b><ul>'+
+         ev.failed.map(function(f){return "<li>"+esc(f)+"</li>";}).join("")+'</ul></div>';
+  if(ev.unknown.length)
+    h += '<div class="why warn"><b>확인이 필요한 항목</b><ul>'+
+         ev.unknown.map(function(f){return "<li>"+esc(f)+"</li>";}).join("")+'</ul></div>';
+  if(ev.warn.length)
+    h += '<div class="why warn"><b>주의</b><ul>'+
+         ev.warn.map(function(f){return "<li>"+esc(f)+"</li>";}).join("")+'</ul></div>';
+
+  if(disc.length && ev.verdict!=="ineligible"){
+    h += '<details><summary>받을 수 있는 우대금리 '+disc.length+'건</summary><div class="in"><ul>'+
+         disc.map(function(d){ return "<li>"+esc(d.label)+" — "+esc(d.amount)+"</li>"; }).join("")+
+         '</ul><p>우대 항목은 중복 적용 한도가 있을 수 있습니다. 은행에서 최종 확인하세요.</p></div></details>';
+  }
+  if(p.docs && p.docs.length){
+    h += '<details><summary>필요 서류</summary><div class="in"><ul>'+
+         p.docs.map(function(d){ return "<li>"+esc(d)+"</li>"; }).join("")+'</ul></div></details>';
+  }
+  if(p.caveats && p.caveats.length){
+    h += '<details><summary>주의사항</summary><div class="in"><ul>'+
+         p.caveats.map(function(d){ return "<li>"+esc(d)+"</li>"; }).join("")+'</ul></div></details>';
+  }
+  if(p.source){
+    h += '<div class="src">자료: '+esc(p.source.name)+
+         (p.source.asof ? ", "+esc(p.source.asof)+" 기준" : "")+
+         (p.source.url ? ' · <a href="'+esc(p.source.url)+'" target="_blank" rel="noopener">원문 확인</a>' : "")+
+         (p.source.confidence==="unverified" ? ' · <b style="color:var(--warn)">미확인</b>' : "")+
+         '</div>';
+  }
+  return h + '</div>';
+}
+
+function render(){
+  if(!D){ return; }
+  var inp = readInput();
+  var list = (D.products||[]).map(function(p){
+    var ev = evalRules(p, inp), rate = pickRate(p, inp), lim = calcLimit(p, inp);
+    return { p:p, ev:ev, rate:rate, lim:lim };
+  });
+
+  /* 정렬: 신청 가능 → 확인 필요 → 미충족. 같은 등급 안에서는 금리 낮은 순. */
+  var order = { eligible:0, check:1, ineligible:2 };
+  list.sort(function(a,b){
+    if(order[a.ev.verdict] !== order[b.ev.verdict]) return order[a.ev.verdict]-order[b.ev.verdict];
+    var ra = a.rate ? a.rate.rate : 99, rb = b.rate ? b.rate.rate : 99;
+    if(ra !== rb) return ra - rb;
+    return (b.p.priority||0) - (a.p.priority||0);
+  });
+
+  var okList = list.filter(function(x){ return x.ev.verdict === "eligible"; });
+  var best = okList[0] || null;
+
+  var html = '<div class="card"><h2>진단 결과</h2>';
+  html += '<p class="hint">'+inp.age+'세 · 가구 연소득 '+man(inp.householdIncome)+' · 보증금 '+man(inp.deposit)+
+          ' · 필요 대출액 '+man(inp.need)+' 기준입니다.</p>';
+
+  html += '<div class="sum">'+
+    '<div><b>'+okList.length+'건</b><span>신청 가능</span></div>'+
+    '<div><b>'+(best&&best.rate ? "연 "+best.rate.rate.toFixed(2)+"%" : "—")+'</b><span>최저 금리</span></div>'+
+    '<div><b>'+(best ? man(best.lim.amount) : "—")+'</b><span>최대 한도</span></div>'+
+    '</div>';
+
+  if(!okList.length){
+    html += '<div class="note"><b>지금 조건으로는 바로 신청 가능한 상품이 없습니다.</b>'+
+            '아래 각 상품의 「신청할 수 없는 이유」를 보고, 바꿀 수 있는 조건부터 확인해 보세요. '+
+            '재직 기간이나 세대주 요건처럼 시간이 지나면 해결되는 항목이 많습니다.</div>';
+  }
+
+  html += list.map(function(x,i){ return prodCard(x.p, inp, best && x.p === best.p); }).join("");
+  html += '</div>';
+
+  /* 비교표 */
+  if(okList.length > 1){
+    html += '<div class="card"><h2>신청 가능 상품 비교</h2>'+
+      '<p class="hint">금리가 낮은 순입니다. 한도가 필요액에 못 미치면 금리가 조금 높아도 한도가 큰 쪽이 나을 수 있습니다.</p>'+
+      '<div class="scroll"><table><tr><th>상품</th><th>금리</th><th>한도</th><th>월 이자</th><th>필요액 충족</th></tr>'+
+      okList.map(function(x){
+        var m = x.rate ? won(x.lim.amount*10000*(x.rate.rate/100)/12) : "—";
+        var enough = x.lim.amount >= inp.need;
+        return '<tr><td>'+esc(x.p.name)+'</td>'+
+               '<td>'+(x.rate?"연 "+x.rate.rate.toFixed(2)+"%":"—")+'</td>'+
+               '<td>'+man(x.lim.amount)+'</td><td>'+m+'</td>'+
+               '<td style="color:'+(enough?"var(--ok)":"var(--bad)")+'">'+(enough?"충족":"부족 "+man(inp.need-x.lim.amount))+'</td></tr>';
+      }).join("")+'</table></div></div>';
+  }
+
+  /* 변경 감지 현황 */
+  var pend = (D.pending_review||[]).filter(function(p){ return p.status==="확정대기"; });
+  if(pend.length){
+    html += '<div class="card"><h2>제도 변경 감지</h2>'+
+      '<p class="hint">자동 점검에서 원문 변경이 확인됐으나, 아직 반영 전인 항목입니다. '+
+      '금리·요건 수치가 걸린 건은 신청 전에 원문을 직접 확인하세요.</p>'+
+      '<div class="scroll"><table><tr><th>출처</th><th>감지일</th><th>수치 변동</th><th>확인</th></tr>'+
+      pend.map(function(p){
+        return '<tr><td>'+esc(p.name)+'</td><td>'+esc(p.detected_at)+'</td>'+
+               '<td style="color:'+(p.rate_touched?"var(--bad)":"var(--sub)")+'">'+(p.rate_touched?"있음":"없음")+'</td>'+
+               '<td><a href="'+esc(p.url)+'" target="_blank" rel="noopener">원문</a></td></tr>';
+      }).join("")+'</table></div></div>';
+  }
+
+  /* 공통 유의사항 */
+  if(D.common_notes && D.common_notes.length){
+    html += '<div class="card"><h2>신청 전에 반드시 볼 것</h2>'+
+      D.common_notes.map(function(n){
+        return '<details open><summary>'+esc(n.title)+'</summary><div class="in"><ul>'+
+          n.items.map(function(t){ return "<li>"+esc(t)+"</li>"; }).join("")+'</ul>'+
+          (n.source ? '<p style="font-size:12px">자료: '+esc(n.source.name)+
+             (n.source.asof?", "+esc(n.source.asof)+" 기준":"")+
+             (n.source.url?' · <a href="'+esc(n.source.url)+'" target="_blank" rel="noopener">원문</a>':"")+'</p>' : "")+
+          '</div></details>';
+      }).join("")+'</div>';
+  }
+
+  html += '<button class="btn ghost" id="again">조건 다시 입력</button>';
+
+  var box = $("result");
+  box.innerHTML = html;
+  box.classList.remove("hide");
+  $("formCard").classList.add("hide");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  $("again").onclick = function(){
+    box.classList.add("hide");
+    $("formCard").classList.remove("hide");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+}
+
+/* ---------- 배선 ---------- */
+function bindReadout(id, out){
+  var el = $(id), o = $(out);
+  if(!el || !o) return;
+  var upd = function(){ o.textContent = el.value ? man(+el.value) : ""; };
+  el.addEventListener("input", upd); upd();
+}
+["income|incomeOut","spouseIncome|spouseOut","assets|assetsOut","deposit|depositOut","ownFund|ownOut"]
+  .forEach(function(pair){ var s = pair.split("|"); bindReadout(s[0], s[1]); });
+
+document.querySelectorAll(".chip").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = $(b.dataset.set);
+    t.value = b.dataset.v;
+    t.dispatchEvent(new Event("input"));
+  });
+});
+
+$("employment").addEventListener("change", function(){
+  var v = this.value;
+  if(v === "none" || v === "student"){ $("tenure").value = "0"; $("income").value = 0; }
+  $("income").dispatchEvent(new Event("input"));
+});
+
+$("run").addEventListener("click", render);
+renderAsof();
+})();
+</script>
+</body>
+</html>
