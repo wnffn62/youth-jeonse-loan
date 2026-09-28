@@ -96,3 +96,24 @@ powershell -ExecutionPolicy Bypass -File tools\자동점검_등록.ps1 -Remove
 - 실제 승인 여부·한도·금리는 은행과 보증기관 심사에서 정해진다. 이 프로그램의 결과는 참고용 추정치다.
 - 신용점수는 이용자 입력값에 의존한다. 은행이 조회하는 점수와 다를 수 있다.
 - 지자체 사업은 연도별 공고에 따라 바뀌므로 공고 기간을 별도로 확인해야 한다.
+
+## 공개 주소와 자동 갱신
+
+- 공개 페이지: https://wnffn62.github.io/youth-jeonse-loan/
+- 저장소: https://github.com/wnffn62/youth-jeonse-loan
+
+매주 월요일 09:00(KST) 예약 클라우드 에이전트가 `tools/ROUTINE.md` 절차를 수행한다.
+공식 출처를 점검해 변경을 감지하고, 바뀐 페이지를 직접 읽어 수치를 추출한 뒤
+안전장치 4종을 통과한 항목만 반영하고 `push` 한다. `push` 하면 Pages 가 공개 페이지를
+자동 갱신하므로 별도 배포 단계가 없다. PC 전원 상태와 무관하게 실행된다.
+
+`tools/자동점검_등록.ps1` 은 같은 점검을 로컬에서 돌리는 예비 경로다. 클라우드 루틴과
+중복 실행해도 스냅샷 비교 결과가 같으므로 충돌하지 않는다.
+
+## 검증
+
+```
+node tests/engine_test.cjs    판정 엔진 18개 케이스
+node tests/render_check.cjs   공개 페이지 렌더 전제조건 12개 항목
+python tools/validate_data.py 데이터 정합성
+```
